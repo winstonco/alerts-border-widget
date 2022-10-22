@@ -16,7 +16,6 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
 	console.log('connected');
-	io.emit('test emit', 'test param');
 })
 
 // Notification request headers
@@ -50,14 +49,35 @@ app.post('/eventsub', (req, res) => {
         
         if (MESSAGE_TYPE_NOTIFICATION === req.headers[MESSAGE_TYPE]) {
             
-            if (notification.subscription.type === 'channel.follow') {
-				let user = notification.event.user_name;
-				console.log(`Received a follow from: ${ user }`);
-				io.emit('follow', user);
+            let type = notification.subscription.type
+            let user = notification.event.user_name;
+            switch (type) {
+                case 'channel.follow':
+                    console.log(`Received a follow from: ${ user }`);
+                    io.emit('alert', 'New Follow!', user);
+                    break;
+                case 'channel.subscribe':
+                    if (!notification.event.is_gift) {
+                        var tier = parseInt(notification.event.tier) / 1000;
+                        console.log(`Received a subscription from: ${ user }`);
+                        io.emit('alert', `New Tier ${ tier } Sub!`, user);
+                    }
+                    break;
+                case 'channel.subscription.gift':
+                    var tier = parseInt(notification.event.tier) / 1000;
+                    var total = notification.event.total;
+                    console.log(`User: ${ user } gifted ${ total } subs`);
+                    io.emit('alert', `${ total } gifted subs!`, user);
+                    break;
+                case 'channel.cheer':
+                    var bits = notification.event.bits;
+                    console.log(`User: ${ user } gifted ${ total } subs`);
+                    io.emit('alert', `Cheer: ${ bits }!`, user);
+                    break;
             }
 
             console.log(`Event type: ${notification.subscription.type}`);
-            console.log(JSON.stringify(notification.event, null, 4));
+            console.log(JSON.stringify(notification, null, 4));
             
             res.sendStatus(204);
         }
