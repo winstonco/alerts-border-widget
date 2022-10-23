@@ -115,7 +115,7 @@ app.post('/eventsub', (req, res) => {
 
 
 function getSecret() {
-    return '8qu9jxqtgiep2ieyrj4qv2czh9kz6s';
+    return process.env.app_secret;
 }
 
 // Build the message used to get the HMAC.
