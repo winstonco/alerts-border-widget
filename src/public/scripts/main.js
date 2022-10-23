@@ -1,4 +1,6 @@
-const socket = io('ws://localhost:8080');
+const socket = io('wss://alerts-border-widget.onrender.com', {
+	path: '/ws/'
+});
 
 const eventQueue = [];
 var waiting = true;

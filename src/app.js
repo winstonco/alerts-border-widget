@@ -4,9 +4,22 @@ const crypto = require('crypto');
 const express = require('express');
 const path = require('path');
 const app = express();
+const https = require('https');
+const fs = require('fs');
 const port = 8080;
-const server = app.listen(port, () => { console.log(`listening at http://localhost:${port}`); });
-const io = require('socket.io')(server);
+const options = {
+    key: fs.readFileSync('C:/Users/winst/AppData/Local/mkcert/rootCA-key.pem'),
+    cert: fs.readFileSync('C:/Users/winst/AppData/Local/mkcert/rootCA.pem'),
+};
+//const server = https
+//    .createServer(options, app)
+    const server = app.listen(port, () => {
+        //console.log(`listening at http://localhost:${port}`);
+        console.log(`listening at https://alerts-border-widget.onrender.com`);
+    });
+const io = require('socket.io')(server, {
+    path: '/ws/'
+});
 
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
@@ -17,130 +30,6 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
 	console.log('connected');
 })
-
-/*
-var clientID = 'fzar3871y7r7j2kqgcyyas1jh4tspw';
-var redirectURI = 'http://localhost:3000';
-var scope = 'bits:read+channel:read:subscriptions'
-var ws;
-
-function parseFragment(hash) {
-    var hashMatch = function(expr) {
-      var match = hash.match(expr);
-      return match ? match[1] : null;
-    };
-    var state = hashMatch(/state=(\w+)/);
-    if (sessionStorage.twitchOAuthState == state)
-        sessionStorage.twitchOAuthToken = hashMatch(/access_token=(\w+)/);
-    return
-};
-
-function authUrl() {
-    sessionStorage.twitchOAuthState = nonce(15);
-    var url = 'https://api.twitch.tv/kraken/oauth2/authorize' +
-        '?response_type=token' +
-        '&client_id=' + clientId + 
-        '&redirect_uri=' + redirectURI +
-        '&state=' + sessionStorage.twitchOAuthState +
-        '&scope=' + scope;
-    return url
-}
-
-// Source: https://www.thepolyglotdeveloper.com/2015/03/create-a-random-nonce-string-using-javascript/
-function nonce(length) {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < length; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
-}
-
-function heartbeat() {
-    message = {
-        type: 'PING'
-    };
-    $('.ws-output').append('SENT: ' + JSON.stringify(message) + '\n');
-    ws.send(JSON.stringify(message));
-}
-
-function listen(topic) {
-    message = {
-        type: 'LISTEN',
-        nonce: nonce(15),
-        data: {
-            topics: [topic],
-            auth_token: sessionStorage.twitchOAuthToken
-        }
-    };
-    $('.ws-output').append('SENT: ' + JSON.stringify(message) + '\n');
-    ws.send(JSON.stringify(message));
-}
-
-function connect() {
-    var heartbeatInterval = 1000 * 60; //ms between PING's
-    var reconnectInterval = 1000 * 3; //ms to wait before reconnect
-    var heartbeatHandle;
-
-    ws = new WebSocket('wss://pubsub-edge.twitch.tv');
-
-    ws.onopen = function(event) {
-        $('.ws-output').append('INFO: Socket Opened\n');
-        heartbeat();
-        heartbeatHandle = setInterval(heartbeat, heartbeatInterval);
-    };
-
-    ws.onerror = function(error) {
-        $('.ws-output').append('ERR:  ' + JSON.stringify(error) + '\n');
-    };
-
-    ws.onmessage = function(event) {
-        console.log(event);
-        message = JSON.parse(event.data);
-        $('.ws-output').append('RECV: ' + JSON.stringify(message) + '\n');
-        if (message.type == 'RECONNECT') {
-            $('.ws-output').append('INFO: Reconnecting...\n');
-            setTimeout(connect, reconnectInterval);
-        }
-    };
-
-    ws.onclose = function() {
-        $('.ws-output').append('INFO: Socket Closed\n');
-        clearInterval(heartbeatHandle);
-        $('.ws-output').append('INFO: Reconnecting...\n');
-        setTimeout(connect, reconnectInterval);
-    };
-
-}
-
-$(function() {
-    if (document.location.hash.match(/access_token=(\w+)/))
-        parseFragment(document.location.hash);
-    if (sessionStorage.twitchOAuthToken) {
-        connect();
-        $('.socket').show()
-        $.ajax({
-            url: "https://api.twitch.tv/kraken/user",
-            method: "GET",
-            headers: {
-                "Client-ID": clientId,
-                "Authorization": "OAuth " + sessionStorage.twitchOAuthToken
-            }})
-            .done(function(user) {
-                $('#topic-label').text("Enter a topic to listen to. For example, to listen to whispers enter topic 'whispers."+user._id+"'");
-            });
-    } else {
-        var url = authUrl()
-        $('#auth-link').attr("href", url);
-        $('.auth').show()
-    }
-});
-
-$('#topic-form').submit(function() {
-    listen($('#topic-text').val());
-    event.preventDefault();
-});
-*/
 
 // Notification request headers
 const TWITCH_MESSAGE_ID = 'Twitch-Eventsub-Message-Id'.toLowerCase();
@@ -165,11 +54,14 @@ app.post('/eventsub', (req, res) => {
     let message = getHmacMessage(req);
     let hmac = HMAC_PREFIX + getHmac(secret, message);  // Signature to compare
 
+    console.log(JSON.parse(req.body));
+
     if (true === verifyMessage(hmac, req.headers[TWITCH_MESSAGE_SIGNATURE])) {
         console.log("signatures match");
 
         // Get JSON object from body, so you can process the message.
         let notification = JSON.parse(req.body);
+        //console.log(notification);
         
         if (MESSAGE_TYPE_NOTIFICATION === req.headers[MESSAGE_TYPE]) {
             
@@ -206,6 +98,7 @@ app.post('/eventsub', (req, res) => {
             res.sendStatus(204);
         }
         else if (MESSAGE_TYPE_VERIFICATION === req.headers[MESSAGE_TYPE]) {
+            console.log(notification.challenge);
             res.status(200).send(notification.challenge);
         }
         else if (MESSAGE_TYPE_REVOCATION === req.headers[MESSAGE_TYPE]) {
@@ -228,6 +121,8 @@ app.post('/eventsub', (req, res) => {
 
 
 function getSecret() {
+    // TODO: Get secret from secure storage. This is the secret you pass 
+    // when you subscribed to the event.
     return 'ypref2tqgh5m0vm4wv09v7oytbfmfk';
 }
 
