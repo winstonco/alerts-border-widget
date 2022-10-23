@@ -51,8 +51,7 @@ app.post('/eventsub', (req, res) => {
 
         // Get JSON object from body, so you can process the message.
         let notification = JSON.parse(req.body);
-        console.log(notification);
-        io.emit(notification);
+        //console.log(notification);
         
         if (MESSAGE_TYPE_NOTIFICATION === req.headers[MESSAGE_TYPE]) {
             
@@ -80,6 +79,10 @@ app.post('/eventsub', (req, res) => {
                     var bits = notification.event.bits;
                     console.log(`User: ${ user } gifted ${ total } subs`);
                     io.emit('alert', `Cheer: ${ bits }!`, user);
+                    break;
+                default:
+                    console.log(`Not handled: ${ type }`);
+                    io.emit('alert', `Alert! ${ type }`, user);
                     break;
             }
 
@@ -112,9 +115,7 @@ app.post('/eventsub', (req, res) => {
 
 
 function getSecret() {
-    // TODO: Get secret from secure storage. This is the secret you pass 
-    // when you subscribed to the event.
-    return 'ypref2tqgh5m0vm4wv09v7oytbfmfk';
+    return '8qu9jxqtgiep2ieyrj4qv2czh9kz6s';
 }
 
 // Build the message used to get the HMAC.
