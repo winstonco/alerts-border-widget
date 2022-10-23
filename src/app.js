@@ -4,19 +4,11 @@ const crypto = require('crypto');
 const express = require('express');
 const path = require('path');
 const app = express();
-const https = require('https');
-const fs = require('fs');
 const port = 8080;
-const options = {
-    key: fs.readFileSync('C:/Users/winst/AppData/Local/mkcert/rootCA-key.pem'),
-    cert: fs.readFileSync('C:/Users/winst/AppData/Local/mkcert/rootCA.pem'),
-};
-//const server = https
-//    .createServer(options, app)
-    const server = app.listen(port, () => {
-        //console.log(`listening at http://localhost:${port}`);
-        console.log(`listening at https://alerts-border-widget.onrender.com`);
-    });
+const server = app.listen(port, () => {
+    //console.log(`listening at http://localhost:${port}`);
+    console.log(`listening at https://alerts-border-widget.onrender.com`);
+});
 const io = require('socket.io')(server, {
     path: '/ws/'
 });
