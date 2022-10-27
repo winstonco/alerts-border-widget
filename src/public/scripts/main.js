@@ -17,7 +17,7 @@ socket.on('alert', (message, username) => {
 	if (waiting) { eventPopup(); }
 });
 
-function eventPopup() {
+async function eventPopup() {
 	waiting = false;
 	if (eventQueue.length > 0) {
 		let next = eventQueue.shift();
@@ -28,13 +28,24 @@ function eventPopup() {
 		$('#alert-message').html(message + '<br>' + username);
 		$('.alert-container').addClass('slide-up');
 	}
-	setTimeout(() => {
-		$('.alert-container').removeClass('slide-up')
-		console.log(eventQueue);
-		setTimeout(() => {
-			(eventQueue.length > 0 == true) ? eventPopup() : waiting = true;
-		}, 1000);
-	}, 3000);
+	await delay(3000);
+	$('.alert-container').removeClass('slide-up')
+	console.log(eventQueue);
+	await delay();	
+	(eventQueue.length > 0 == true) ? eventPopup() : waiting = true;
+}
+
+/**
+ * Function to delay by a time given in milliseconds.
+ * @param {number} [time=1000] The time to wait in milliseconds.
+ * @returns A Promise that resolves after waiting.
+ */
+function delay(time = 1000) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve('resolved');
+    }, time);
+  });
 }
 
 /**
@@ -44,4 +55,13 @@ function emptyQueue() {
 	eventQueue.length = 0;
 	console.log("Cleared the queue!");
 	console.log(eventQueue);
+}
+
+/**
+ * Used to test the pop up animation
+ */
+function testPopup() {
+	console.log("Testing popup!");
+	eventQueue.push({'msg': "This is a test", 'user': "testuser"});
+	if (waiting) { eventPopup(); }
 }
