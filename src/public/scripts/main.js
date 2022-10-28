@@ -1,3 +1,20 @@
+const fs = require('fs');
+const toml = require('toml');
+const config = toml.parse(fs.readFileSync('/config.toml', 'utf-8'));
+
+let slideTime = (config.slide-duration / 1000).toString + "s";
+
+// Set css variables
+$(':root').css({
+	'--width': config.width,
+  '--height': config.height,
+  '--alert-height': config.alert-height,
+  '--alert-border': '7px;',
+  '--text-color': config.text-color,
+  '--back-color': config.back-color,
+	'--slide-duration': slideTime
+});
+
 const socket = io('wss://alerts-border-widget.onrender.com', {
 	path: '/ws/'
 });
@@ -28,7 +45,7 @@ async function eventPopup() {
 		$('#alert-message').html(message + '<br>' + username);
 		$('.alert-container').addClass('slide-up');
 	}
-	await delay(3000);
+	await delay(config.slide-duration);
 	$('.alert-container').removeClass('slide-up')
 	console.log(eventQueue);
 	await delay();	

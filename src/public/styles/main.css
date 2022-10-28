@@ -5,6 +5,9 @@
   --height: 300px;
   --alert-height: 100px;
   --alert-border: 7px;
+  --text-color: rgb(255, 255, 255);
+  --back-color: rgb(6, 0, 37);
+  --slide-duration: 3s;
 }
 
 * {
@@ -66,8 +69,8 @@ body {
   position: absolute;
   bottom: var(--alert-border);
   margin-left: var(--alert-border);
-  color: rgb(255, 255, 255);
-  background-color: rgb(6, 0, 37);
+  color: var(--text-color);
+  background-color: var(--back-color);
   z-index: 0;
   display: flex;
   align-items: center;
@@ -75,11 +78,13 @@ body {
 }
 
 .slide-down {
-  animation: 3s ease-in-out slide-down;
+  animation: ease-in-out slide-down;
+  animation-duration: var(--slide-duration);
 }
 
 .slide-up {
-  animation: 3s ease-in-out slide-up;
+  animation: ease-in-out slide-up;
+  animation-duration: var(--slide-duration);
 }
 
 @keyframes slide-down {

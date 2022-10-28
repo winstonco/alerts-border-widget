@@ -1,0 +1,13 @@
+# Size of window
+width = "400px"
+height = "300px"
+
+# Alert box height
+alert-height = "100px"
+
+# Colors
+text-color = "rgb(255, 255, 255)"
+back-color = "rgb(6, 0, 37)"
+
+# Slide up time (milliseconds)
+slide-duration = 3000
