@@ -1,5 +1,5 @@
-const socket = io('wss://alerts-border-widget.onrender.com', {
-  //const socket = io('ws://localhost:8080', {
+//const socket = io('wss://alerts-border-widget.onrender.com', {
+const socket = io('ws://localhost:8080', {
   path: '/ws/',
 });
 

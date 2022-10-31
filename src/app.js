@@ -1,13 +1,15 @@
 // Code modified from: https://dev.twitch.tv/docs/eventsub/handling-webhook-events#simple-nodejs-example
 
+const dotenv = require('dotenv');
+dotenv.config();
 const crypto = require('crypto');
 const express = require('express');
 const path = require('path');
 const app = express();
 const port = 8080;
 const server = app.listen(port, () => {
-  //console.log(`listening at http://localhost:${port}`);
-  console.log(`listening at https://alerts-border-widget.onrender.com`);
+  console.log(`listening at http://localhost:${port}`);
+  //console.log(`listening at https://alerts-border-widget.onrender.com`);
 });
 const io = require('socket.io')(server, {
   path: '/ws/',
@@ -125,7 +127,7 @@ app.post('/eventsub', (req, res) => {
 });
 
 function getSecret() {
-  return process.env.app_secret;
+  return process.env.APP_SECRET;
 }
 
 // Build the message used to get the HMAC.
