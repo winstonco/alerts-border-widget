@@ -4,12 +4,12 @@ const crypto = require('crypto');
 const express = require('express');
 const path = require('path');
 const app = express();
-const port = 443;
+const port = 8080;
 const server = app.listen(port, () => {
   //console.log(`listening at http://localhost:${port}`);
   console.log(`listening at https://alerts-border-widget.onrender.com`);
 });
-const io = require('socket.io')(server, {
+const io = require('socket.io').listen(server, {
   path: '/ws/',
 });
 
