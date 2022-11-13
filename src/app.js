@@ -9,7 +9,6 @@ const app = express();
 const PORT = process.env.PORT;
 const { Server } = require('socket.io');
 const http = require('http');
-const httpStatus = require('http-status');
 const cors = require('cors');
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
@@ -22,10 +21,6 @@ app.use(express.json());
 
 app.use(cors());
 app.options('*', cors());
-
-app.use((req, res, next) => {
-  next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
-});
 
 const server = http.createServer(app);
 server.listen(PORT, () => {
@@ -157,3 +152,7 @@ function verifyMessage(hmac, verifySignature) {
     Buffer.from(verifySignature)
   );
 }
+
+app.use((req, res, next) => {
+  next(new Error('Not found'));
+});
