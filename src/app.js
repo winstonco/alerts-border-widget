@@ -6,15 +6,33 @@ const crypto = require('crypto');
 const express = require('express');
 const path = require('path');
 const app = express();
-const port = 8080;
-const server = app.listen(port, () => {
-  console.log(`listening at http://localhost:${port}`);
-  //console.log(`listening at https://alerts-border-widget.onrender.com`);
-});
-const io = require('socket.io')(server, {
-  path: '/ws/',
+const PORT = process.env.PORT;
+const { Server } = require('socket.io');
+const http = require('http');
+const httpStatus = require('http-status');
+const cors = require('cors');
+
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.use(express.json());
+
+app.use(cors());
+app.options('*', cors());
+
+app.use((req, res, next) => {
+  next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
+});
+
+const server = http.createServer(app);
+server.listen(PORT, () => {
+  console.log(`Listening at port ${PORT}`);
+});
+
+const io = new Server(server);
 io.on('connection', (socket) => {
   console.log('connected');
 
@@ -22,12 +40,6 @@ io.on('connection', (socket) => {
     console.log('pingy');
     socket.emit('pongy');
   });
-});
-
-app.use('/public', express.static(path.join(__dirname, 'public')));
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Notification request headers
@@ -45,13 +57,6 @@ const MESSAGE_TYPE_REVOCATION = 'revocation';
 
 // Prepend this string to the HMAC that's created from the message
 const HMAC_PREFIX = 'sha256=';
-
-app.use(
-  express.raw({
-    // Need raw message body for signature verification
-    type: 'application/json',
-  })
-);
 
 app.post('/eventsub', (req, res) => {
   console.log(req.body);
