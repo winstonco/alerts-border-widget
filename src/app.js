@@ -153,6 +153,6 @@ function verifyMessage(hmac, verifySignature) {
   );
 }
 
-app.use((req, res, next) => {
-  next(new Error('Not found'));
-});
+// app.use((req, res, next) => {
+//   next(throw new Error('Not found'));
+// });
