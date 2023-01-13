@@ -1,17 +1,17 @@
 // Code modified from: https://dev.twitch.tv/docs/eventsub/handling-webhook-events#simple-nodejs-example
 
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 dotenv.config();
-const crypto = require('crypto');
-const express = require('express');
-const path = require('path');
-const app = express();
-const PORT = process.env.PORT;
-const { Server } = require('socket.io');
-const http = require('http');
-const cors = require('cors');
+import crypto from 'crypto';
+import express from 'express';
+import path from 'path';
+import { Server } from 'socket.io';
+import http from 'http';
+import cors from 'cors';
 
-app.use('/public', express.static(path.join(__dirname, 'public')));
+const PORT = process.env.PORT;
+const app = express();
+const server = http.createServer(app);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -26,12 +26,12 @@ app.use(express.json());
 app.use(cors());
 app.options('*', cors());
 
-const server = http.createServer(app);
 server.listen(PORT, () => {
   console.log(`Listening at port ${PORT}`);
 });
 
 const io = new Server(server);
+
 io.on('connection', (socket) => {
   console.log('connected');
 
