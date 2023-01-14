@@ -2,19 +2,30 @@
 
 import dotenv from 'dotenv';
 dotenv.config();
-import crypto from 'crypto';
 import express from 'express';
-import path from 'path';
 import { Server } from 'socket.io';
-import http from 'http';
+import { createServer } from 'http';
 import cors from 'cors';
+
+import {
+  TWITCH_MESSAGE_SIGNATURE,
+  MESSAGE_TYPE,
+  MESSAGE_TYPE_VERIFICATION,
+  MESSAGE_TYPE_NOTIFICATION,
+  MESSAGE_TYPE_REVOCATION,
+  HMAC_PREFIX,
+  getSecret,
+  getHmacMessage,
+  getHmac,
+  verifyMessage,
+} from './twitch';
 
 const PORT = process.env.PORT;
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.send('Alerts Border Widget server');
 });
 
 app.get('/health', (req, res) => {
@@ -26,10 +37,6 @@ app.use(express.json());
 app.use(cors());
 app.options('*', cors());
 
-server.listen(PORT, () => {
-  console.log(`Listening at port ${PORT}`);
-});
-
 const io = new Server(server);
 
 io.on('connection', (socket) => {
@@ -40,22 +47,6 @@ io.on('connection', (socket) => {
     socket.emit('pongy');
   });
 });
-
-// Notification request headers
-const TWITCH_MESSAGE_ID = 'Twitch-Eventsub-Message-Id'.toLowerCase();
-const TWITCH_MESSAGE_TIMESTAMP =
-  'Twitch-Eventsub-Message-Timestamp'.toLowerCase();
-const TWITCH_MESSAGE_SIGNATURE =
-  'Twitch-Eventsub-Message-Signature'.toLowerCase();
-const MESSAGE_TYPE = 'Twitch-Eventsub-Message-Type'.toLowerCase();
-
-// Notification message types
-const MESSAGE_TYPE_VERIFICATION = 'webhook_callback_verification';
-const MESSAGE_TYPE_NOTIFICATION = 'notification';
-const MESSAGE_TYPE_REVOCATION = 'revocation';
-
-// Prepend this string to the HMAC that's created from the message
-const HMAC_PREFIX = 'sha256=';
 
 app.post('/eventsub', (req, res) => {
   console.log(req.body);
@@ -131,32 +122,6 @@ app.post('/eventsub', (req, res) => {
   }
 });
 
-function getSecret() {
-  return process.env.APP_SECRET;
-}
-
-// Build the message used to get the HMAC.
-function getHmacMessage(request) {
-  return (
-    request.headers[TWITCH_MESSAGE_ID] +
-    request.headers[TWITCH_MESSAGE_TIMESTAMP] +
-    request.body
-  );
-}
-
-// Get the HMAC.
-function getHmac(secret, message) {
-  return crypto.createHmac('sha256', secret).update(message).digest('hex');
-}
-
-// Verify whether our hash matches the hash that Twitch passed in the header.
-function verifyMessage(hmac, verifySignature) {
-  return crypto.timingSafeEqual(
-    Buffer.from(hmac),
-    Buffer.from(verifySignature)
-  );
-}
-
-// app.use((req, res, next) => {
-//   next(throw new Error('Not found'));
-// });
+server.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});

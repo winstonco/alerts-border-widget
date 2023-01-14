@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js",
-    "dev": "node src/app.js"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "repository": {
     "type": "git",
@@ -27,5 +27,8 @@
     "http-status": "^1.5.3",
     "socket.io": "^4.5.3",
     "ws": "^8.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }
