@@ -18,7 +18,7 @@ import {
   getHmacMessage,
   getHmac,
   verifyMessage,
-} from './twitch';
+} from './twitch.js';
 
 const PORT = process.env.PORT;
 const app = express();
