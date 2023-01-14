@@ -1,7 +1,6 @@
-const socket = io('https://alerts-border-widget.onrender.com', {
-  //const socket = io('ws://localhost:8080', {
-  path: '/ws/',
-});
+const SERVER_URL = process.env.SERVER_URL ?? 'ws://localhost:8080';
+
+const socket = io(SERVER_URL);
 
 const eventQueue = [];
 var waiting = true;
