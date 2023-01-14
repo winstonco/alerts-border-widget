@@ -1,4 +1,5 @@
-const SERVER_URL = process.env.SERVER_URL ?? 'ws://localhost:8080';
+const SERVER_URL = 'https://alerts-border-widget-production.up.railway.app';
+console.log(SERVER_URL);
 
 const socket = io(SERVER_URL);
 
