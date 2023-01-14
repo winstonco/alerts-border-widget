@@ -26,13 +26,15 @@ const ORIGIN =
 const app = express();
 const server = createServer(app);
 
-const corsOptions = {
-  origin: ORIGIN,
-};
-
-app.get('/', cors(corsOptions), (req, res) => {
-  res.send('Alerts Border Widget server');
-});
+app.get(
+  '/',
+  cors({
+    origin: '*',
+  }),
+  (req, res) => {
+    res.send('Alerts Border Widget server');
+  }
+);
 
 app.get('/health', (req, res) => {
   res.status(200);
@@ -45,7 +47,11 @@ app.use(
   })
 );
 
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: ORIGIN,
+  },
+});
 
 io.on('connection', (socket) => {
   console.log('connected');
