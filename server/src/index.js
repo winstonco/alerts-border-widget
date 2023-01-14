@@ -20,11 +20,17 @@ import {
   verifyMessage,
 } from './twitch.js';
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT ?? 8080;
+const ORIGIN =
+  process.env.ORIGIN ?? 'https://alerts-border-widget.onrender.com';
 const app = express();
 const server = createServer(app);
 
-app.get('/', (req, res) => {
+const corsOptions = {
+  origin: ORIGIN,
+};
+
+app.get('/', cors(corsOptions), (req, res) => {
   res.send('Alerts Border Widget server');
 });
 
@@ -32,10 +38,12 @@ app.get('/health', (req, res) => {
   res.status(200);
 });
 
-app.use(express.json());
-
-app.use(cors());
-app.options('*', cors());
+app.use(
+  express.raw({
+    // Need raw message body for signature verification
+    type: 'application/json',
+  })
+);
 
 const io = new Server(server);
 
