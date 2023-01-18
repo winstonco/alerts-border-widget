@@ -29,16 +29,6 @@ const app = express();
 const server = createServer(app);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// app.get(
-//   '/',
-//   cors({
-//     origin: '*',
-//   }),
-//   (req, res) => {
-//     res.sendFile(__dirname + '/index.html');
-//   }
-// );
-
 app.use(
   cors({
     origin: '*',
