@@ -8,7 +8,7 @@
 }
 
 * {
-    font-family: 'Roboto', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 body {
@@ -17,19 +17,19 @@ body {
   border: none;
   margin: none;
   padding: none;
-  
+
   font-size: 32px;
   font-weight: bold;
   text-align: center;
 }
 
-.camborder-container {
+#camborder-container {
   height: var(--height);
   width: var(--width);
   z-index: 0;
 }
 
-.camborder-img-container {
+#camborder-img-container {
   overflow: hidden;
   height: var(--height);
   width: var(--width);
@@ -38,29 +38,29 @@ body {
   z-index: 1;
 }
 
-.camborder-img {
+#camborder-img {
   height: calc(var(--height) * 3);
   width: calc(var(--width) * 3);
-  background-image: url("../images/background2.png");
+  background-image: url('../images/background2.png');
   background-position: center;
   background-repeat: repeat;
   animation: 7s linear infinite slide-diagonal-cont;
   background-color: rgb(182, 238, 255);
 }
 
-.alert-container {
+#alert-container {
   overflow: hidden;
   width: var(--width);
   height: var(--alert-height);
   margin: none;
   position: absolute;
   top: 0px;
-  
-  transform: translate(0, 0);
+
+  /* transform: translate(0, 0); */
   z-index: -1;
 }
 
-.alert-message-container {
+#alert-message-container {
   width: calc(100% - (var(--alert-border) * 2));
   height: calc(100% - (var(--alert-border) * 2));
   position: absolute;
@@ -74,12 +74,12 @@ body {
   justify-content: center;
 }
 
-.slide-down {
-  animation: 3s ease-in-out slide-down;
-}
-
 .slide-up {
   animation: 3s ease-in-out slide-up;
+}
+
+.up {
+  top: -100px !important;
 }
 
 @keyframes slide-down {
@@ -119,4 +119,28 @@ body {
   100% {
     transform: translate(-500px, -400px);
   }
+}
+
+#console {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  text-align: left;
+  line-height: 20px;
+  height: 200px;
+  overflow-y: scroll;
+}
+
+#console > ul {
+  padding-left: 0px;
+  list-style: none;
+}
+
+#console > ul > li {
+  box-sizing: border-box;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-top: -1px;
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
 }

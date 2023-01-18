@@ -6,20 +6,41 @@
     <script type="module">
       import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script defer src="/scripts/main.js"></script>
   </head>
   <body>
-    <div class="camborder-container">
-      <div class="camborder-img-container">
-        <div class="camborder-img"></div>
+    <div id="camborder-container">
+      <div id="camborder-img-container">
+        <div id="camborder-img"></div>
       </div>
-      <div class="alert-container">
-        <div class="camborder-img"></div>
-        <div class="alert-message-container">
+      <div id="alert-container">
+        <div id="camborder-img"></div>
+        <div id="alert-message-container">
           <span id="alert-message"></span>
         </div>
       </div>
     </div>
+    <br>
+    <div>
+      <button onclick="toggleDisable()" id="toggle">
+        Disable Events
+      </button>
+      <button onclick="toggleUp()">
+        Toggle Up
+      </button>
+      <button onclick="emptyQueue()">
+        Clear Queue
+      </button>
+      <button onclick="testPopup()">
+        Test Popup
+      </button>
+      <button onclick="ping()">
+        Ping
+      </button>
+    </div>
+    <br>
+    <pre id="console">
+      <ul id="ul"></ul>
+    </pre>
   </body>
 </html>

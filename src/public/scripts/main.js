@@ -1,22 +1,39 @@
-const SERVER_URL = 'https://alerts-border-widget.onrender.com'; // 'http://localhost:8080';
+const shownConsole = {
+  log(msg) {
+    if (msg) {
+      const ul = document.getElementById('ul');
+      const li = document.createElement('li');
+      li.appendChild(document.createTextNode(msg));
+      ul.appendChild(li);
+    }
+  },
+};
+
+const SERVER_URL = 'https://alerts-border-widget.onrender.com';
+shownConsole.log(SERVER_URL);
 console.log(SERVER_URL);
 
 const socket = io(SERVER_URL);
 
 const eventQueue = [];
-var waiting = true;
+let disabled = false;
+let up = false;
+let waiting = true;
 
 socket.on('connect', () => {
+  shownConsole.log('Connected');
   console.log('Connected!');
   eventPopup();
 });
 
 socket.on('alert', (message, username) => {
+  shownConsole.log(message, username);
   console.log(message, username);
-  eventQueue.push({ msg: message, user: username });
-  console.log(eventQueue);
-  if (waiting) {
-    eventPopup();
+  if (!disabled) {
+    eventQueue.push({ msg: message, user: username });
+    if (waiting) {
+      eventPopup();
+    }
   }
 });
 
@@ -26,14 +43,16 @@ async function eventPopup() {
     let next = eventQueue.shift();
     let message = next.msg;
     let username = next.user;
+    shownConsole.log(username);
     console.log(username);
+    shownConsole.log(message);
     console.log(message);
-    $('#alert-message').html(message + '<br>' + username);
-    $('.alert-container').addClass('slide-up');
+    document.getElementById('alert-message').innerHTML =
+      message + '<br>' + username;
+    document.getElementById('alert-container').classList.add('slide-up');
   }
   await delay(3000);
-  $('.alert-container').removeClass('slide-up');
-  console.log(eventQueue);
+  document.getElementById('alert-container').classList.remove('slide-up');
   await delay();
   eventQueue.length > 0 == true ? eventPopup() : (waiting = true);
 }
@@ -52,10 +71,31 @@ function delay(time = 1000) {
 }
 
 /**
+ * Toggle disabling events
+ */
+function toggleDisable() {
+  disabled = !disabled;
+  document.getElementById('toggle').innerHTML = disabled
+    ? 'Enable Events'
+    : 'Disable Events';
+}
+
+/**
+ * Toggle disabling events
+ */
+function toggleUp() {
+  up = !up;
+  up
+    ? document.getElementById('alert-container').classList.add('up')
+    : document.getElementById('alert-container').classList.remove('up');
+}
+
+/**
  * Used to clear the queue.
  */
 function emptyQueue() {
   eventQueue.length = 0;
+  shownConsole.log('Cleared the queue!');
   console.log('Cleared the queue!');
   console.log(eventQueue);
 }
@@ -64,6 +104,7 @@ function emptyQueue() {
  * Used to test the pop up animation
  */
 function testPopup() {
+  shownConsole.log('Testing popup!');
   console.log('Testing popup!');
   eventQueue.push({ msg: 'This is a test', user: 'testuser' });
   if (waiting) {
@@ -78,10 +119,13 @@ var start;
 function ping() {
   start = Date.now();
   socket.emit('pingy');
+  shownConsole.log('Ping!');
   console.log('Ping!');
 }
 
 socket.on('pongy', () => {
+  shownConsole.log('Time: ' + (Date.now() - start) + ' ms');
   console.log('Time: ' + (Date.now() - start) + ' ms');
+  shownConsole.log('Pong!');
   console.log('Pong!');
 });
