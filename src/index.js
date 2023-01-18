@@ -6,6 +6,8 @@ import express from 'express';
 import { Server } from 'socket.io';
 import { createServer } from 'http';
 import cors from 'cors';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 import {
   TWITCH_MESSAGE_SIGNATURE,
@@ -25,19 +27,18 @@ const ORIGIN =
   process.env.ORIGIN ?? 'https://alerts-border-widget.onrender.com';
 const app = express();
 const server = createServer(app);
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-app.get(
-  '/',
+app.use(
   cors({
     origin: '*',
-  }),
-  (req, res) => {
-    res.send('Alerts Border Widget server');
-  }
+  })
 );
 
+app.use('/public', express.static(__dirname + '/public'));
+
 app.get('/health', (req, res) => {
-  res.status(200);
+  res.status(200).send('Health check successful!');
 });
 
 app.use(

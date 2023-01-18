@@ -1,4 +1,4 @@
-const SERVER_URL = 'https://alerts-border-widget-production.up.railway.app';
+const SERVER_URL = 'https://alerts-border-widget-2.onrender.com';
 console.log(SERVER_URL);
 
 const socket = io(SERVER_URL);
