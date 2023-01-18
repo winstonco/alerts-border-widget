@@ -35,7 +35,7 @@ app.use(
   })
 );
 
-app.use('/public', express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public'));
 
 app.get('/health', (req, res) => {
   res.status(200).send('Health check successful!');
