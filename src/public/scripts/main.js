@@ -1,4 +1,4 @@
-const SERVER_URL = 'https://alerts-border-widget-2.onrender.com';
+const SERVER_URL = 'https://alerts-border-widget.onrender.com'; // 'http://localhost:8080';
 console.log(SERVER_URL);
 
 const socket = io(SERVER_URL);
