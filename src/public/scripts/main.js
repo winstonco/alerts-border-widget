@@ -16,7 +16,7 @@ console.log(SERVER_URL);
 const socket = io(SERVER_URL);
 
 const eventQueue = [];
-let disabled = false;
+let disabled = true;
 let up = false;
 let waiting = true;
 
